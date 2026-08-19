@@ -28,12 +28,13 @@ Regla: NO avanzar de fase sin que su criterio de cierre pase.
 - **Verificación:** `pytest -q` + prueba manual en navegador.
 - **Resultado:** 26 tests PASADOS; `./validate.sh` verde; flujo completo verificado por HTTP (catálogo → slots → POST anónimo con CSRF → detalle → cancelación). Seed con 3 servicios + 2 empleados.
 
-## FASE 4 — Lógica de conflictos (solapamientos, no-overbooking)
+## FASE 4 — Lógica de conflictos (solapamientos, no-overbooking)  ✅ COMPLETADA (2026-08-18)
 
 - **Descripción:** implementar y endurecer la lógica de negocio: validación de solapamientos (RF-SYS-01), no-overbooking (RF-SYS-02/03), horario de atención (RF-SYS-04), ID único por reserva (RF-SYS-05).
 - **Archivos:** `app/models.py`, `app/api/*`, `tests/test_models.py`, `tests/test_api.py`.
 - **Criterio de cierre:** pytest con tests de conflicto pasa (reservas solapadas rechazadas, slots bloqueados, IDs únicos).
 - **Verificación:** `pytest -q tests/test_models.py tests/test_api.py -k "conflict"` + `./validate.sh`.
+- **Resultado:** 32 tests PASADOS (6 nuevos de conflictos). `Reserva.hay_conflicto` en models; POST `/reservas` retorna 409 en solapamiento; disponibilidad filtra slots ocupados y excluye canceladas. Curl real: 201 → 409 → disponibilidad sin `10:00`. `./validate.sh` verde con nuevo grep.
 
 ## FASE 5 — Panel administrador
 

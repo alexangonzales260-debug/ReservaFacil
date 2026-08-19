@@ -109,15 +109,45 @@ def get_disponibilidad(empleado_id: int) -> Response:
             400,
         )
     try:
-        datetime.fromisoformat(fecha)
+        fecha_dt = datetime.fromisoformat(fecha).date()
     except ValueError:
         return make_response(
             jsonify({"error": "fecha invalida (formato YYYY-MM-DD)"}), 400
         )
 
-    slots = _generate_slots(empleado.horario_inicio, empleado.horario_fin)
+    dia_inicio = datetime.combine(fecha_dt, time.min)
+    dia_fin = datetime.combine(fecha_dt, time.max)
+    reservas = db.session.execute(
+        db.select(Reserva).where(
+            Reserva.empleado_id == empleado_id,
+            Reserva.estado.in_(["pendiente", "confirmada"]),
+            Reserva.fecha_hora_inicio < dia_fin,
+            Reserva.fecha_hora_fin > dia_inicio,
+        )
+    ).scalars().all()
+
+    slots_disponibles: List[str] = []
+    for slot in _generate_slots(empleado.horario_inicio, empleado.horario_fin):
+        slot_inicio = datetime.combine(
+            fecha_dt, datetime.strptime(slot, "%H:%M").time()
+        )
+        slot_fin = slot_inicio + timedelta(minutes=30)
+        ocupado = any(
+            r.fecha_hora_inicio < slot_fin and r.fecha_hora_fin > slot_inicio
+            for r in reservas
+        )
+        if not ocupado:
+            slots_disponibles.append(slot)
+
     return make_response(
-        jsonify({"empleado_id": empleado_id, "fecha": fecha, "slots": slots}), 200
+        jsonify(
+            {
+                "empleado_id": empleado_id,
+                "fecha": fecha,
+                "slots": slots_disponibles,
+            }
+        ),
+        200,
     )
 
 
@@ -172,6 +202,15 @@ def crear_reserva() -> Response:
         )
 
     fin = inicio + timedelta(minutes=servicio.duracion_minutos)
+
+    if Reserva.hay_conflicto(
+        empleado_id=empleado.id,
+        fecha_hora_inicio=inicio,
+        fecha_hora_fin=fin,
+    ):
+        return make_response(
+            jsonify({"error": "El empleado ya tiene una reserva en ese horario"}), 409
+        )
 
     reserva = Reserva(
         codigo=_generate_unique_codigo(),

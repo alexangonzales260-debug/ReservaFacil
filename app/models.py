@@ -143,6 +143,23 @@ class Reserva(db.Model):
     def generate_codigo(cls) -> str:
         return "RF-" + secrets.token_hex(3).upper()
 
+    @staticmethod
+    def hay_conflicto(
+        empleado_id: int,
+        fecha_hora_inicio: datetime,
+        fecha_hora_fin: datetime,
+        excluir_reserva_id: Optional[int] = None,
+    ) -> bool:
+        query = db.select(Reserva).where(
+            Reserva.empleado_id == empleado_id,
+            Reserva.estado.in_(["pendiente", "confirmada"]),
+            Reserva.fecha_hora_inicio < fecha_hora_fin,
+            Reserva.fecha_hora_fin > fecha_hora_inicio,
+        )
+        if excluir_reserva_id is not None:
+            query = query.where(Reserva.id != excluir_reserva_id)
+        return db.session.execute(query).scalars().first() is not None
+
     def to_dict(self) -> dict:
         return {
             "id": self.id,

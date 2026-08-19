@@ -52,6 +52,10 @@ else
 fi
 
 echo ""
+echo "=== Verificando uso de hay_conflicto (FASE 4) ==="
+grep -n "hay_conflicto" app/models.py app/api/routes.py || exit 1
+
+echo ""
 echo "=== [4/5] Ejecutando pytest ==="
 if compgen -G "tests/test_*.py" >/dev/null 2>&1; then
   if python -m pytest -q; then
