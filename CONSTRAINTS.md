@@ -54,3 +54,8 @@ Restricciones técnicas y convenciones del proyecto. **Reglas no negociables.**
 - Modelos en `app/models.py`; extensiones en `app/extensions.py`.
 - Tests en `tests/` con `conftest.py` compartido.
 - Toda fecha/hora se procesa en America/Lima.
+
+## 7. Git y control de versiones
+
+- **Regla Git Push:** El ejecutor NUNCA ejecutará `git push` a remotos (HTTPS/SSH). El push a repositorios remotos lo realiza exclusivamente el humano desde su terminal local para gestionar credenciales (tokens/SSH) de forma segura.
+- **Regla Registro de Hashes:** El hash registrado en `METRICAS.md` para una fase es el del commit que contiene los cambios funcionales de dicha fase. Si es necesario actualizar `METRICAS.md` tras cerrar la fase, se hace un commit posterior de mantenimiento (ej. "chore: sync metrics") pero la tabla SIEMPRE registra el hash del commit principal de la fase. Nunca se usará `git commit --amend` para incluir el propio archivo de métricas.

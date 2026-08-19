@@ -7,4 +7,4 @@
 | F4 Conflictos | 32 | 37 | 0 | OK | pre-v2 |
 | F5 Admin | 38 | 44 | 0 | OK | pre-v2 |
 | F6 Emails+pulido | 40 | 0 | 0 | OK | pre-v2 |
-| F0 Retrofit v2 | 40 | 0 | 0 | OK | 3f647ef |
+| F0 Retrofit v2 | 40 | 0 | 0 | OK | ea5c2f6 |
