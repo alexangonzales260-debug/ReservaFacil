@@ -20,6 +20,7 @@ from app.admin import admin
 from app.emails import enviar_email
 from app.extensions import db
 from app.models import Empleado, Reserva, Servicio, Usuario
+from app.whatsapp import enviar_whatsapp_simulado
 
 
 def admin_required(view: Callable) -> Callable:
@@ -350,6 +351,11 @@ def _notificar_cambio_estado(reserva: Reserva, estado: str) -> None:
             f"Tu reserva fue confirmada · {reserva.codigo}",
             cuerpo,
         )
+        if reserva.usuario.telefono:
+            enviar_whatsapp_simulado(
+                reserva.usuario.telefono,
+                f"Hola {nombre_cliente}, tu reserva {reserva.codigo} fue confirmada.\n¡Te esperamos!",
+            )
     elif estado == "completada":
         cuerpo = (
             f"Hola {nombre_cliente},\n\n"
@@ -361,6 +367,11 @@ def _notificar_cambio_estado(reserva: Reserva, estado: str) -> None:
             f"Gracias por tu visita · {reserva.codigo}",
             cuerpo,
         )
+        if reserva.usuario.telefono:
+            enviar_whatsapp_simulado(
+                reserva.usuario.telefono,
+                f"Hola {nombre_cliente}, ¡gracias por tu visita! Tu reserva {reserva.codigo} fue completada. ¡Vuelve pronto!",
+            )
 
 
 @admin.post("/reservas/<int:reserva_id>/confirmar")

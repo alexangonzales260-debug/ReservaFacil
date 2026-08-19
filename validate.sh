@@ -65,6 +65,10 @@ echo "=== Verificando uso de enviar_email (FASE 6) ==="
 grep -n "enviar_email" app/api/routes.py app/admin/routes.py || exit 1
 
 echo ""
+echo "=== Verificando uso de enviar_whatsapp (FASE 8) ==="
+grep -n "enviar_whatsapp" app/api/routes.py app/admin/routes.py || exit 1
+
+echo ""
 echo "=== Gates threat-light (FASE 7) ==="
 ! grep -rn "shell=True" app/ || exit 1
 ! grep -rnE "debug\s*=\s*True" app/ run.py || exit 1

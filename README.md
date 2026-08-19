@@ -9,6 +9,7 @@ Sistema web de reservas para una peluquería local en Lima, Perú. Permite a los
 - **Base de datos:** SQLite (archivo único `instance/reservafacil.db`)
 - **Frontend:** Jinja2 + TailwindCSS vía CDN + JavaScript vanilla
 - **Seguridad:** Flask-WTF (CSRF), contraseñas hasheadas con Werkzeug
+- **Notificaciones:** emails y WhatsApp simulados (consola + `instance/emails.log` y `instance/whatsapp.log`)
 - **Tests:** pytest
 
 ## Instalación
@@ -58,7 +59,7 @@ pytest -v
 ./validate.sh
 ```
 
-`validate.sh` verifica: sintaxis Python, presence de `hay_conflicto`, ausencia de `utcnow()`, uso de `enviar_email`, gates threat-light (`shell=True`, `debug=True`, contraseñas hardcodeadas), `pytest`, APIs prohibidas (`eval`/`exec`/`os.system`) y que la base SQLite sea creable.
+`validate.sh` verifica: sintaxis Python, presence de `hay_conflicto`, ausencia de `utcnow()`, uso de `enviar_email` y `enviar_whatsapp`, gates threat-light (`shell=True`, `debug=True`, contraseñas hardcodeadas), `pytest`, APIs prohibidas (`eval`/`exec`/`os.system`) y que la base SQLite sea creable.
 
 ## Estructura de carpetas
 
@@ -69,6 +70,7 @@ ReservaFacil/
 │   ├── models.py         # Usuario, Servicio, Empleado, Reserva
 │   ├── extensions.py     # db (SQLAlchemy), csrf (Flask-WTF)
 │   ├── emails.py         # emails simulados (consola + instance/emails.log)
+│   ├── whatsapp.py       # WhatsApp simulado (consola + instance/whatsapp.log)
 │   ├── admin/            # blueprint panel administrador
 │   ├── cliente/          # blueprint flujo cliente
 │   └── api/              # blueprint API JSON (/api/v1)
@@ -93,3 +95,4 @@ ReservaFacil/
 | 5 | Panel administrador | ✅ Completada |
 | 6 | Emails simulados + pulido | ✅ Completada |
 | 7 | Hardening (secretos vía variables de entorno) | ✅ Completada |
+| 8 | Notificaciones WhatsApp simuladas | ✅ Completada |

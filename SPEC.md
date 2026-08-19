@@ -83,3 +83,4 @@ Convenciones de nomenclatura en este documento:
 ### 3.4 Email simulado
 
 - **RF-SYS-06** — Cuando se cree o cancele una reserva, el sistema deberá emitir un email simulado por `logger`/consola (prohibido usar APIs de email reales).
+- **RF-SYS-07** — Cuando se cree, cancele, confirme o complete una reserva y el cliente tenga teléfono registrado, el sistema deberá emitir una notificación de WhatsApp simulada (consola + `instance/whatsapp.log`), siguiendo el patrón del email simulado (RF-SYS-06).

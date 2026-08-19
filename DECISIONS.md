@@ -55,3 +55,9 @@ Formato: 3 líneas por entrada — **Contexto** / **Decisión** / **Consecuencia
 - **Contexto:** Repo público en GitHub; credenciales hardcodeadas en código y README.
 - **Decisión:** Secretos vía variables de entorno (`os.environ.get`); defaults de desarrollo solo fuera de producción.
 - **Consecuencia:** README sin credenciales; `APP_ENV=production` exige secretos explícitos.
+
+## D10 | WhatsApp simulado (sin Twilio)
+
+- **Contexto:** Twilio real exige cuenta de pago y API keys, violando la restricción todo-local y "sin dependencias de pago".
+- **Decisión:** Simular WhatsApp con logger + `instance/whatsapp.log`, mismo patrón que `emails.py`.
+- **Consecuencia:** Sin costo ni claves; para producción real basta sustituir el cuerpo de `app/whatsapp.py` por la llamada a Twilio.

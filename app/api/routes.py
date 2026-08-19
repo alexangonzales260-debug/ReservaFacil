@@ -11,6 +11,7 @@ from app.api import api
 from app.emails import enviar_email
 from app.extensions import db
 from app.models import Empleado, Reserva, Servicio, Usuario
+from app.whatsapp import enviar_whatsapp_simulado
 
 LIMA_TZ = ZoneInfo("America/Lima")
 
@@ -240,6 +241,16 @@ def crear_reserva() -> Response:
         cuerpo,
     )
 
+    if usuario.telefono:
+        mensaje_whatsapp = (
+            f"Hola {nombre_cliente}, tu reserva {reserva.codigo} quedó registrada.\n"
+            f"Servicio: {servicio.nombre}\n"
+            f"Empleado: {empleado.nombre}\n"
+            f"Fecha y hora: {reserva.fecha_hora_inicio.strftime('%d/%m/%Y %H:%M')}\n"
+            "¡Te esperamos!"
+        )
+        enviar_whatsapp_simulado(usuario.telefono, mensaje_whatsapp)
+
     return make_response(jsonify(reserva.to_dict()), 201)
 
 
@@ -283,5 +294,14 @@ def cancelar_reserva(reserva_id: int) -> Response:
         f"Reserva cancelada · {reserva.codigo}",
         cuerpo,
     )
+
+    if reserva.usuario.telefono:
+        mensaje_whatsapp = (
+            f"Hola {nombre_cliente}, tu reserva {reserva.codigo} fue cancelada.\n"
+            f"Servicio: {reserva.servicio.nombre}\n"
+            f"Empleado: {reserva.empleado.nombre}\n"
+            "Si quieres reagendar, visítanos en nuestra página. ¡Gracias!"
+        )
+        enviar_whatsapp_simulado(reserva.usuario.telefono, mensaje_whatsapp)
 
     return make_response(jsonify(reserva.to_dict()), 200)
