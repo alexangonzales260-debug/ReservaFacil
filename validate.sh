@@ -65,6 +65,13 @@ echo "=== Verificando uso de enviar_email (FASE 6) ==="
 grep -n "enviar_email" app/api/routes.py app/admin/routes.py || exit 1
 
 echo ""
+echo "=== Gates threat-light (FASE 7) ==="
+! grep -rn "shell=True" app/ || exit 1
+! grep -rnE "debug\s*=\s*True" app/ run.py || exit 1
+! grep -rnE "password\s*=\s*['\"][^'\"]+['\"]" app/ config.py seed.py || exit 1
+echo "OK: gates threat-light sin violaciones."
+
+echo ""
 echo "=== [4/5] Ejecutando pytest ==="
 if compgen -G "tests/test_*.py" >/dev/null 2>&1; then
   if python -m pytest -q; then

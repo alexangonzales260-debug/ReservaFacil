@@ -49,3 +49,9 @@ Formato: 3 líneas por entrada — **Contexto** / **Decisión** / **Consecuencia
 - **Contexto:** Despliegue local en una máquina.
 - **Decisión:** SQLite archivo único (`instance/`).
 - **Consecuencia:** Migrar a Postgres si llega multi-sucursal (F10).
+
+## D9 | Secretos vía variables de entorno
+
+- **Contexto:** Repo público en GitHub; credenciales hardcodeadas en código y README.
+- **Decisión:** Secretos vía variables de entorno (`os.environ.get`); defaults de desarrollo solo fuera de producción.
+- **Consecuencia:** README sin credenciales; `APP_ENV=production` exige secretos explícitos.

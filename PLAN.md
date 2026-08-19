@@ -63,3 +63,9 @@ Cada fase finaliza ejecutando `./validate.sh`. La secuencia completa (FASE 1 →
 - **Descripción:** retrofit de la fábrica a la v2 + limpieza de artefactos del repositorio (retirados de tracking sin borrar del disco).
 - **Archivos:** `.gitignore`, `DECISIONS.md`, `METRICAS.md`, `PLAN.md`.
 - **Verificación:** `./validate.sh` + `git ls-files` sin `venv/`, `instance/`, `__pycache__/`, `*.pyc`.
+
+## F7 Hardening threat-light  ✅ COMPLETADA
+
+- **Descripción:** credenciales y secretos vía variables de entorno (`config.py`); candado en producción; README sin credenciales; gates threat-light en `validate.sh`.
+- **Archivos:** `config.py`, `seed.py`, `run.py`, `.gitignore`, `.env.example`, `README.md`, `validate.sh`, `tests/test_hardening.py`.
+- **Verificación:** `./validate.sh` + `pytest -q` (42 tests, 0 warnings) + `APP_ENV=production python -c "import config"` falla sin `SECRET_KEY`.

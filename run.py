@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import config
+
 from app import create_app
 from app.extensions import db
 from app.models import Servicio
@@ -23,4 +25,9 @@ def _auto_seed_if_empty() -> None:
 _auto_seed_if_empty()
 
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=5000, debug=True, use_reloader=False)
+    app.run(
+        host="127.0.0.1",
+        port=5000,
+        debug=config.APP_ENV == "development",
+        use_reloader=False,
+    )

@@ -8,3 +8,4 @@
 | F5 Admin | 38 | 44 | 0 | OK | pre-v2 |
 | F6 Emails+pulido | 40 | 0 | 0 | OK | pre-v2 |
 | F0 Retrofit v2 | 40 | 0 | 0 | OK | ea5c2f6 |
+| F7 Hardening | 42 | 0 | 0 | OK | (pendiente) |

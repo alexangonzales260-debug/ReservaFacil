@@ -11,12 +11,13 @@ from typing import List
 from app import create_app
 from app.extensions import db
 from app.models import Empleado, Servicio, Usuario
+from config import ADMIN_PASSWORD, ADMIN_USERNAME
 
 ADMIN_USER = {
-    "username": "admin",
+    "username": ADMIN_USERNAME,
     "nombre": "Administrador",
     "email": "admin@reservafacil.pe",
-    "password": "admin123",
+    "password": ADMIN_PASSWORD,
 }
 
 SERVICIOS = [

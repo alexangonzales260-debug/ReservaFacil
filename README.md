@@ -28,12 +28,28 @@ python run.py
 
 Abre `http://localhost:5000`. Si la base de datos está vacía, `run.py` ejecuta el seed automáticamente.
 
-## Credenciales de administración
+## Configuración
 
-- **Usuario:** `admin`
-- **Contraseña:** `admin123`
+Los secretos y credenciales se leen de variables de entorno (`os.environ`), nunca del código.
 
-Panel en `http://localhost:5000/admin`.
+| Variable | Uso | Default (solo fuera de producción) |
+|---|---|---|
+| `APP_ENV` | Entorno de ejecución (`development` o `production`) | `development` |
+| `SECRET_KEY` | Clave secreta de sesiones de Flask | `dev-secret-key` (avisa por consola si no se define) |
+| `ADMIN_USERNAME` | Usuario administrador creado por el seed | `admin` |
+| `ADMIN_PASSWORD` | Contraseña del administrador (seed) | default de desarrollo (ver `.env.example`) |
+
+En `APP_ENV=production` es obligatorio definir `SECRET_KEY`, `ADMIN_USERNAME` y `ADMIN_PASSWORD`; si faltan, el arranque falla con `RuntimeError`.
+
+Usa `.env.example` como plantilla: cópialo a `.env` (ignorado por git) y exporta las variables antes de ejecutar:
+
+```bash
+cp .env.example .env
+set -a; source .env; set +a
+python run.py
+```
+
+Panel administrador en `http://localhost:5000/admin`.
 
 ## Tests
 
@@ -42,7 +58,7 @@ pytest -v
 ./validate.sh
 ```
 
-`validate.sh` verifica: sintaxis Python, presence de `hay_conflicto`, ausencia de `utcnow()`, uso de `enviar_email`, `pytest`, APIs prohibidas (`eval`/`exec`/`os.system`) y que la base SQLite sea creable.
+`validate.sh` verifica: sintaxis Python, presence de `hay_conflicto`, ausencia de `utcnow()`, uso de `enviar_email`, gates threat-light (`shell=True`, `debug=True`, contraseñas hardcodeadas), `pytest`, APIs prohibidas (`eval`/`exec`/`os.system`) y que la base SQLite sea creable.
 
 ## Estructura de carpetas
 
@@ -76,5 +92,4 @@ ReservaFacil/
 | 4 | Lógica de conflictos (solapamientos, no-overbooking) | ✅ Completada |
 | 5 | Panel administrador | ✅ Completada |
 | 6 | Emails simulados + pulido | ✅ Completada |
-
-**PROYECTO CERRADO.**
+| 7 | Hardening (secretos vía variables de entorno) | ✅ Completada |
