@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Iniciar sesión · ReservaFácil{% endblock %}
+{% block content %}
+<div class="max-w-sm mx-auto bg-white rounded-lg shadow p-6 mt-8">
+  <h1 class="text-xl font-bold text-center mb-4">Iniciar sesión</h1>
+  {% if error %}
+  <p class="bg-red-100 text-red-700 border border-red-300 rounded px-3 py-2 mb-3 text-sm">{{ error }}</p>
+  {% endif %}
+  <form method="post" action="{{ url_for('cliente.login_cliente_post') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="mb-3">
+      <label for="email" class="block text-sm font-medium mb-1">Email</label>
+      <input name="email" id="email" type="email" required value="{{ email or '' }}" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+    </div>
+    <div class="mb-4">
+      <label for="password" class="block text-sm font-medium mb-1">Contraseña</label>
+      <input name="password" id="password" type="password" required class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+    </div>
+    <button class="w-full bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg py-2 font-medium">Ingresar</button>
+  </form>
+  <p class="text-sm text-gray-500 text-center mt-3">
+    ¿No tienes cuenta? <a href="{{ url_for('cliente.registrarse') }}" class="text-emerald-600 hover:underline">Crea una</a>
+  </p>
+</div>
+{% endblock %}

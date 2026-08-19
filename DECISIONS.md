@@ -61,3 +61,9 @@ Formato: 3 líneas por entrada — **Contexto** / **Decisión** / **Consecuencia
 - **Contexto:** Twilio real exige cuenta de pago y API keys, violando la restricción todo-local y "sin dependencias de pago".
 - **Decisión:** Simular WhatsApp con logger + `instance/whatsapp.log`, mismo patrón que `emails.py`.
 - **Consecuencia:** Sin costo ni claves; para producción real basta sustituir el cuerpo de `app/whatsapp.py` por la llamada a Twilio.
+
+## D11 | Cuenta de cliente opcional (convive con anónimo)
+
+- **Contexto:** Cliente anónimo (D1); el Usuario anónimo se crea sin contraseña propia.
+- **Decisión:** Registrarse con un email anónimo activa la cuenta y hereda sus reservas.
+- **Consecuencia:** Sin verificación de email, aceptable en threat-light.

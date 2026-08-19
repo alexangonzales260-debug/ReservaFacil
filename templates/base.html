@@ -13,7 +13,18 @@
 <nav class="bg-emerald-600 text-white shadow">
   <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
     <a href="{{ url_for('cliente.index') }}" class="text-xl font-bold tracking-tight">ReservaFácil</a>
-    <span class="text-sm text-emerald-100">Peluquería · Lima</span>
+    <div class="flex items-center gap-4 text-sm">
+      <span class="text-emerald-100">Peluquería · Lima</span>
+      {% if not request.path.startswith('/admin') %}
+        {% if session.get('rol') == 'cliente' %}
+          <a href="{{ url_for('cliente.mis_reservas') }}" class="hover:underline">Mis reservas</a>
+          <a href="{{ url_for('cliente.logout_cliente') }}" class="bg-white text-emerald-600 rounded px-3 py-1 font-medium">Salir</a>
+        {% else %}
+          <a href="{{ url_for('cliente.login_cliente') }}" class="hover:underline">Iniciar sesión</a>
+          <a href="{{ url_for('cliente.registrarse') }}" class="bg-white text-emerald-600 rounded px-3 py-1 font-medium">Crear cuenta</a>
+        {% endif %}
+      {% endif %}
+    </div>
   </div>
 </nav>
 {% endblock %}

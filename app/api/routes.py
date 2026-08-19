@@ -8,6 +8,7 @@ from zoneinfo import ZoneInfo
 from flask import Response, jsonify, make_response, request
 
 from app.api import api
+from app.cliente.routes import PASSWORD_ANONIMO
 from app.emails import enviar_email
 from app.extensions import db
 from app.models import Empleado, Reserva, Servicio, Usuario
@@ -73,7 +74,7 @@ def _get_or_create_cliente(
         email=email,
         telefono=telefono,
     )
-    usuario.set_password(secrets.token_urlsafe(12))
+    usuario.set_password(PASSWORD_ANONIMO)
     db.session.add(usuario)
     return usuario
 

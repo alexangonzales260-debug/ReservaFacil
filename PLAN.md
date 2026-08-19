@@ -69,3 +69,9 @@ Cada fase finaliza ejecutando `./validate.sh`. La secuencia completa (FASE 1 →
 - **Descripción:** credenciales y secretos vía variables de entorno (`config.py`); candado en producción; README sin credenciales; gates threat-light en `validate.sh`.
 - **Archivos:** `config.py`, `seed.py`, `run.py`, `.gitignore`, `.env.example`, `README.md`, `validate.sh`, `tests/test_hardening.py`.
 - **Verificación:** `./validate.sh` + `pytest -q` (42 tests, 0 warnings) + `APP_ENV=production python -c "import config"` falla sin `SECRET_KEY`.
+
+## FASE 9 — Autenticación de cliente + portal "Mis reservas"  ✅ COMPLETADA
+
+- **Descripción:** registro/login de cliente (flask.session + Werkzeug), portal "Mis reservas" con cancelación propia y adopción de cuentas anónimas.
+- **Archivos:** `app/cliente/routes.py`, `app/api/routes.py`, `templates/registrarse.html`, `templates/login_cliente.html`, `templates/mis_reservas.html`, `templates/base.html`, `tests/test_auth_cliente.py`.
+- **Verificación:** `./validate.sh` + `pytest -q` (53 tests, 0 warnings) + flujo curl registro → mis-reservas → cancelar.

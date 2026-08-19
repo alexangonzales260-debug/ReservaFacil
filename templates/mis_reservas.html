@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Mis reservas · ReservaFácil{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-4">Mis reservas</h1>
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    {% for m in messages %}
+    <div class="bg-emerald-100 text-emerald-800 border border-emerald-300 rounded px-4 py-2 mb-3">{{ m }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+{% if reservas %}
+<ul class="space-y-3">
+  {% for r in reservas %}
+  <li class="bg-white rounded-lg shadow p-4 flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <p class="font-semibold">{{ r.servicio_nombre }}</p>
+      <p class="text-sm text-gray-600">Código: {{ r.codigo }} · Empleado: {{ r.empleado_nombre }}</p>
+      <p class="text-sm text-gray-600">{{ r.fecha_inicio_display }}</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <span class="text-sm px-2 py-1 rounded {% if r.estado in ('pendiente', 'confirmada') %}bg-emerald-100 text-emerald-800{% else %}bg-gray-100 text-gray-600{% endif %}">{{ r.estado }}</span>
+      {% if r.estado in ('pendiente', 'confirmada') %}
+      <form method="post" action="{{ url_for('cliente.mis_reservas_cancelar', reserva_id=r.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button class="bg-red-600 hover:bg-red-700 text-white rounded px-3 py-1 text-sm">Cancelar</button>
+      </form>
+      {% endif %}
+    </div>
+  </li>
+  {% endfor %}
+</ul>
+{% else %}
+<p class="text-gray-600">Aún no tienes reservas.</p>
+{% endif %}
+{% endblock %}
