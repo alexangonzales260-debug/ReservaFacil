@@ -5,6 +5,15 @@ from app import create_app
 from app.extensions import db
 
 
+@pytest.fixture(autouse=True)
+def _reset_limites():
+    from app.security import reset_limites
+
+    reset_limites()
+    yield
+    reset_limites()
+
+
 @pytest.fixture()
 def app():
     app = create_app(

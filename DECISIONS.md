@@ -73,3 +73,9 @@ Formato: 3 líneas por entrada — **Contexto** / **Decisión** / **Consecuencia
 - **Contexto:** El dueño necesita inteligencia de negocio (métricas y gráficos) sin tooling de build ni dependencias de servidor.
 - **Decisión:** Chart.js vía CDN (coherente con Tailwind, D7) + exportación CSV con stdlib (`csv`).
 - **Consecuencia:** Cero dependencias nuevas en `requirements.txt`; Chart.js requiere internet en el cliente, aceptable.
+
+## D13 | Rate limiter en memoria y CSP omitida
+
+- **Contexto:** Login sin límite de intentos y respuestas sin cabeceras de seguridad; prohibido añadir dependencias externas.
+- **Decisión:** Rate limiter en memoria (máx 5 intentos/60 s por IP) + cabeceras `X-Content-Type-Options`, `X-Frame-Options`, `Referrer-Policy` y `Cache-Control: no-store` en `/admin`; CSP omitida a propósito.
+- **Consecuencia:** Cero dependencias; el limiter es por proceso (aceptable single-process) y no hay CSP porque Tailwind y Chart.js se sirven por CDN.

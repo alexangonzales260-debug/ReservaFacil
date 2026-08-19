@@ -23,6 +23,7 @@ from app.admin import admin
 from app.emails import enviar_email
 from app.extensions import db
 from app.models import Empleado, Reserva, Servicio, Usuario
+from app.security import MENSAJE_429, controlar_intentos
 from app.whatsapp import enviar_whatsapp_simulado
 
 LIMA_TZ = ZoneInfo("America/Lima")
@@ -72,6 +73,16 @@ def login() -> Response:
 def login_post() -> Response:
     username = request.form.get("username", "").strip()
     password = request.form.get("password", "")
+    ip = request.remote_addr or "desconocida"
+    if not controlar_intentos(ip, "login"):
+        return (
+            render_template(
+                "admin/login.html",
+                error=MENSAJE_429,
+                username=username,
+            ),
+            429,
+        )
     usuario = db.session.execute(
         db.select(Usuario).where(Usuario.username == username)
     ).scalar_one_or_none()

@@ -85,6 +85,11 @@ echo "=== Verificando export CSV de reportes (FASE 10) ==="
 grep -n "reservas.csv" app/admin/routes.py || exit 1
 
 echo ""
+echo "=== Verificando anti fuerza bruta y cabeceras (FASE 11) ==="
+grep -n "controlar_intentos" app/admin/routes.py app/cliente/routes.py || exit 1
+grep -n "after_request" app/__init__.py || exit 1
+
+echo ""
 echo "=== [4/5] Ejecutando pytest ==="
 if compgen -G "tests/test_*.py" >/dev/null 2>&1; then
   if python -m pytest -q; then

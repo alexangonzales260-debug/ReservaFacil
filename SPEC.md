@@ -89,3 +89,7 @@ Convenciones de nomenclatura en este documento:
 
 - **RF-SYS-06** — Cuando se cree o cancele una reserva, el sistema deberá emitir un email simulado por `logger`/consola (prohibido usar APIs de email reales).
 - **RF-SYS-07** — Cuando se cree, cancele, confirme o complete una reserva y el cliente tenga teléfono registrado, el sistema deberá emitir una notificación de WhatsApp simulada (consola + `instance/whatsapp.log`), siguiendo el patrón del email simulado (RF-SYS-06).
+
+### 3.5 Anti fuerza bruta
+
+- **RF-SYS-08** — Cuando se reciban intentos de inicio de sesión (admin o cliente), el sistema deberá limitarlos a un máximo de 5 intentos fallidos por IP en una ventana de 60 segundos, respondiendo HTTP 429 a partir del 6º intento.

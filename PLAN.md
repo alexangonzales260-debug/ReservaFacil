@@ -81,3 +81,9 @@ Cada fase finaliza ejecutando `./validate.sh`. La secuencia completa (FASE 1 →
 - **Descripción:** inteligencia de negocio para el dueño: dashboard de reportes (métricas del mes + gráficos Chart.js de reservas por día y top servicios) y exportación CSV de reservas con filtros.
 - **Archivos:** `app/admin/routes.py`, `templates/admin/reportes.html`, `templates/admin/base_admin.html`, `tests/test_reportes.py`, `validate.sh`, `SPEC.md`, `DECISIONS.md`.
 - **Verificación:** `./validate.sh` + `pytest -q` + flujo curl reportes/CSV con y sin sesión admin.
+
+## F11 Hardening final  ✅ COMPLETADA
+
+- **Descripción:** cierre de huecos threat-light: rate limiter en memoria contra fuerza bruta en login (admin y cliente) y cabeceras de seguridad HTTP (`nosniff`, `SAMEORIGIN`, `Referrer-Policy`, `Cache-Control: no-store` en /admin).
+- **Archivos:** `app/security.py`, `app/admin/routes.py`, `app/cliente/routes.py`, `app/__init__.py`, `tests/test_security.py`, `validate.sh`, `SPEC.md`, `DECISIONS.md`.
+- **Verificación:** `./validate.sh` + `pytest -q` + flujo curl (6 POST → 429) y `curl -sI` con cabeceras.

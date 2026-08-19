@@ -20,6 +20,7 @@ from app.cliente import cliente
 from app.emails import enviar_email
 from app.extensions import db
 from app.models import Reserva, Usuario
+from app.security import MENSAJE_429, controlar_intentos
 from app.whatsapp import enviar_whatsapp_simulado
 
 PASSWORD_ANONIMO = "__reservafacil_anonimo__"
@@ -154,6 +155,16 @@ def login_cliente() -> Response:
 def login_cliente_post() -> Response:
     email = request.form.get("email", "").strip().lower()
     password = request.form.get("password", "")
+    ip = request.remote_addr or "desconocida"
+    if not controlar_intentos(ip, "login"):
+        return (
+            render_template(
+                "login_cliente.html",
+                error=MENSAJE_429,
+                email=email,
+            ),
+            429,
+        )
     usuario = db.session.execute(
         db.select(Usuario).where(Usuario.email == email)
     ).scalar_one_or_none()

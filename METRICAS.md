@@ -12,3 +12,4 @@
 | F8 WhatsApp | 45 | 0 | 0 | OK | b584853 |
 | F9 Auth Cliente | 54 | 0 | 1 | OK | b7154b5 |
 | F10 Reportes | 59 | 0 | 0 | OK | 9167a3a |
+| F11 Hardening final | 63 | 0 | 0 | OK | (pendiente) |

@@ -3,7 +3,7 @@ from __future__ import annotations
 import os
 from typing import Dict, Optional
 
-from flask import Flask
+from flask import Flask, request
 
 from app.extensions import csrf, db
 
@@ -46,5 +46,14 @@ def create_app(config: Optional[Dict] = None) -> Flask:
         if not tables_created["done"]:
             db.create_all()
             tables_created["done"] = True
+
+    @app.after_request
+    def _cabeceras_seguridad(response):
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "SAMEORIGIN"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        if request.path.startswith("/admin"):
+            response.headers["Cache-Control"] = "no-store"
+        return response
 
     return app
