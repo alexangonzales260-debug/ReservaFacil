@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import secrets
-from datetime import datetime, time
+from datetime import datetime, time, timezone
 from typing import List, Optional
 
 from sqlalchemy import (
@@ -19,6 +19,11 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from app.extensions import db
+
+
+def _utc_now() -> datetime:
+    return datetime.now(timezone.utc)
+
 
 empleado_servicio = Table(
     "empleado_servicio",
@@ -39,7 +44,7 @@ class Usuario(db.Model):
     password_hash: Mapped[str] = mapped_column(String(256), nullable=False)
     es_admin: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.utcnow, nullable=False
+        DateTime(timezone=True), default=_utc_now, nullable=False
     )
 
     reservas: Mapped[List["Reserva"]] = relationship(back_populates="usuario")
@@ -135,7 +140,7 @@ class Reserva(db.Model):
     estado: Mapped[str] = mapped_column(String(20), default="pendiente", nullable=False)
     notas: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), default=datetime.utcnow, nullable=False
+        DateTime(timezone=True), default=_utc_now, nullable=False
     )
 
     usuario: Mapped["Usuario"] = relationship(back_populates="reservas")

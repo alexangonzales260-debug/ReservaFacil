@@ -17,6 +17,7 @@ from flask import (
 from sqlalchemy import func
 
 from app.admin import admin
+from app.emails import enviar_email
 from app.extensions import db
 from app.models import Empleado, Reserva, Servicio, Usuario
 
@@ -329,7 +330,37 @@ def _cambiar_estado(reserva_id: int, nuevo_estado: str) -> Response:
         reserva.estado = nuevo_estado
         db.session.commit()
         flash(f"Reserva {reserva.codigo} marcada como '{nuevo_estado}'.")
+        _notificar_cambio_estado(reserva, nuevo_estado)
     return redirect(url_for("admin.reservas_lista"))
+
+
+def _notificar_cambio_estado(reserva: Reserva, estado: str) -> None:
+    nombre_cliente = reserva.usuario.nombre or reserva.usuario.username
+    if estado == "confirmada":
+        cuerpo = (
+            f"Hola {nombre_cliente},\n\n"
+            f"Tu reserva {reserva.codigo} fue confirmada.\n"
+            f"Servicio: {reserva.servicio.nombre}\n"
+            f"Empleado: {reserva.empleado.nombre}\n"
+            f"Fecha y hora: {reserva.fecha_hora_inicio.strftime('%d/%m/%Y %H:%M')}\n\n"
+            "¡Te esperamos!"
+        )
+        enviar_email(
+            reserva.usuario.email,
+            f"Tu reserva fue confirmada · {reserva.codigo}",
+            cuerpo,
+        )
+    elif estado == "completada":
+        cuerpo = (
+            f"Hola {nombre_cliente},\n\n"
+            "¡Gracias por tu visita! Esperamos que hayas quedado feliz.\n"
+            f"Tu reserva {reserva.codigo} fue completada. ¡Vuelve pronto!"
+        )
+        enviar_email(
+            reserva.usuario.email,
+            f"Gracias por tu visita · {reserva.codigo}",
+            cuerpo,
+        )
 
 
 @admin.post("/reservas/<int:reserva_id>/confirmar")

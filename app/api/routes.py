@@ -8,6 +8,7 @@ from zoneinfo import ZoneInfo
 from flask import Response, jsonify, make_response, request
 
 from app.api import api
+from app.emails import enviar_email
 from app.extensions import db
 from app.models import Empleado, Reserva, Servicio, Usuario
 
@@ -223,6 +224,22 @@ def crear_reserva() -> Response:
     )
     db.session.add(reserva)
     db.session.commit()
+
+    nombre_cliente = usuario.nombre or usuario.username
+    cuerpo = (
+        f"Hola {nombre_cliente},\n\n"
+        f"Tu reserva fue registrada con el código {reserva.codigo}.\n"
+        f"Servicio: {servicio.nombre}\n"
+        f"Empleado: {empleado.nombre}\n"
+        f"Fecha y hora: {reserva.fecha_hora_inicio.strftime('%d/%m/%Y %H:%M')}\n\n"
+        "¡Te esperamos en la peluquería!"
+    )
+    enviar_email(
+        usuario.email,
+        f"Reserva registrada · {reserva.codigo}",
+        cuerpo,
+    )
+
     return make_response(jsonify(reserva.to_dict()), 201)
 
 
@@ -251,4 +268,20 @@ def cancelar_reserva(reserva_id: int) -> Response:
         return make_response(jsonify({"error": "reserva no encontrada"}), 404)
     reserva.estado = "cancelada"
     db.session.commit()
+
+    nombre_cliente = reserva.usuario.nombre or reserva.usuario.username
+    cuerpo = (
+        f"Hola {nombre_cliente},\n\n"
+        f"Tu reserva {reserva.codigo} fue cancelada.\n"
+        f"Servicio: {reserva.servicio.nombre}\n"
+        f"Empleado: {reserva.empleado.nombre}\n"
+        f"Fecha y hora: {reserva.fecha_hora_inicio.strftime('%d/%m/%Y %H:%M')}\n\n"
+        "Si quieres reagendar, visítanos en nuestra página. ¡Gracias!"
+    )
+    enviar_email(
+        reserva.usuario.email,
+        f"Reserva cancelada · {reserva.codigo}",
+        cuerpo,
+    )
+
     return make_response(jsonify(reserva.to_dict()), 200)

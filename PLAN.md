@@ -44,12 +44,13 @@ Regla: NO avanzar de fase sin que su criterio de cierre pase.
 - **Verificación:** `pytest -q` + prueba manual en navegador + `./validate.sh`.
 - **Resultado:** 38 tests PASADOS (6 nuevos de admin). Login con `flask.session` + `@admin_required`; soft delete en servicios/empleados; gestión de estados de reserva (confirmar/cancelar/completar); seed crea admin `admin/admin123`.
 
-## FASE 6 — Emails simulados + pulido
+## FASE 6 — Emails simulados + pulido  ✅ COMPLETADA (2026-08-18) — PROYECTO CERRADO
 
 - **Descripción:** emitir emails simulados por `logger`/consola al crear/cancelar reservas (RF-SYS-06) y pulido general de UX/errores.
 - **Archivos:** `app/*`, `templates/*`, `tests/*`.
 - **Criterio de cierre:** las confirmaciones aparecen en logs al crear/cancelar reservas.
 - **Verificación:** `pytest -q` + revisar logs + `./validate.sh`.
+- **Resultado:** 40 tests PASADOS con **0 warnings de deprecación** (se eliminó `utcnow()`). Emails simulados en consola + `instance/emails.log` (confirmación/cancelación en API, confirmación/agradecimiento en admin). Manejo de errores 409/red en el frontend. README.md final. Nuevos gates en `validate.sh` (sin `utcnow()`, uso de `enviar_email`).
 
 ---
 

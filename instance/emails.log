@@ -1,0 +1,32 @@
+==================================================
+De: ReservaFácil <no-responder@reservafacil.local>
+Para: cliente1@example.com
+Asunto: Reserva registrada · RF-7F4314
+------------------------------------------
+Hola cliente1,
+
+Tu reserva fue registrada con el código RF-7F4314.
+Servicio: Corte de cabello
+Empleado: Ana Gomez
+Fecha y hora: 25/08/2026 11:00
+
+¡Te esperamos en la peluquería!
+[2026-08-19T03:57:31+00:00]
+==================================================
+
+==================================================
+De: ReservaFácil <no-responder@reservafacil.local>
+Para: cliente1@example.com
+Asunto: Reserva cancelada · RF-7F4314
+------------------------------------------
+Hola cliente1,
+
+Tu reserva RF-7F4314 fue cancelada.
+Servicio: Corte de cabello
+Empleado: Ana Gomez
+Fecha y hora: 25/08/2026 11:00
+
+Si quieres reagendar, visítanos en nuestra página. ¡Gracias!
+[2026-08-19T03:57:31+00:00]
+==================================================
+

@@ -29,7 +29,11 @@ fechaInput.min = isoHoy;
 async function fetchJSON(url, options) {
   const res = await fetch(url, options);
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || 'Error en la solicitud');
+  if (!res.ok) {
+    const err = new Error(data.error || 'Error en la solicitud');
+    err.status = res.status;
+    throw err;
+  }
   return data;
 }
 
@@ -166,8 +170,15 @@ btnReservar.addEventListener('click', async () => {
     seccionConfirmacion.classList.remove('hidden');
     seccionConfirmacion.scrollIntoView({ behavior: 'smooth', block: 'center' });
   } catch (err) {
-    errorForm.textContent = 'No se pudo crear la reserva: ' + err.message;
-    errorForm.classList.remove('hidden');
+    if (err.status === 409) {
+      errorForm.textContent = 'Ese horario acaba de ocuparse. Elige otro slot disponible.';
+      errorForm.classList.remove('hidden');
+      cargarDisponibilidad();
+      seccionForm.classList.remove('hidden');
+    } else {
+      errorForm.textContent = 'No pudimos conectar con el servidor. Intenta de nuevo.';
+      errorForm.classList.remove('hidden');
+    }
   } finally {
     btnReservar.disabled = false;
   }

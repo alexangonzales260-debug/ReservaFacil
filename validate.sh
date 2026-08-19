@@ -56,6 +56,15 @@ echo "=== Verificando uso de hay_conflicto (FASE 4) ==="
 grep -n "hay_conflicto" app/models.py app/api/routes.py || exit 1
 
 echo ""
+echo "=== Verificando ausencia de utcnow() en app/ (FASE 6) ==="
+! grep -rn "utcnow()" app/ || exit 1
+echo "OK: sin usos de utcnow()."
+
+echo ""
+echo "=== Verificando uso de enviar_email (FASE 6) ==="
+grep -n "enviar_email" app/api/routes.py app/admin/routes.py || exit 1
+
+echo ""
 echo "=== [4/5] Ejecutando pytest ==="
 if compgen -G "tests/test_*.py" >/dev/null 2>&1; then
   if python -m pytest -q; then
