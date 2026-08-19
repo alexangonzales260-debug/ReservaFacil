@@ -57,3 +57,9 @@ Regla: NO avanzar de fase sin que su criterio de cierre pase.
 ## Resumen de verificación global
 
 Cada fase finaliza ejecutando `./validate.sh`. La secuencia completa (FASE 1 → 6) es el roadmap del proyecto.
+
+## F0 Retrofit v2  ✅ COMPLETADA
+
+- **Descripción:** retrofit de la fábrica a la v2 + limpieza de artefactos del repositorio (retirados de tracking sin borrar del disco).
+- **Archivos:** `.gitignore`, `DECISIONS.md`, `METRICAS.md`, `PLAN.md`.
+- **Verificación:** `./validate.sh` + `git ls-files` sin `venv/`, `instance/`, `__pycache__/`, `*.pyc`.
