@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+  <title>{% block title %}ReservaFácil{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col text-gray-800">
+  <nav class="bg-emerald-600 text-white shadow">
+    <div class="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="{{ url_for('cliente.index') }}" class="text-xl font-bold tracking-tight">ReservaFácil</a>
+      <span class="text-sm text-emerald-100">Peluquería · Lima</span>
+    </div>
+  </nav>
+
+  <main class="flex-1 w-full max-w-4xl mx-auto px-4 py-6">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="bg-white border-t">
+    <div class="max-w-4xl mx-auto px-4 py-4 text-center text-sm text-gray-500">
+      © 2026 ReservaFácil · Peluquería local en Lima, Perú
+    </div>
+  </footer>
+</body>
+</html>
