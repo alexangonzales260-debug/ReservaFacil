@@ -1,0 +1,37 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Servicios · Admin{% endblock %}
+{% block admin_content %}
+<div class="bg-white rounded-lg shadow p-5 max-w-lg mx-auto">
+  <h1 class="text-xl font-bold mb-4">{{ 'Editar servicio' if servicio else 'Nuevo servicio' }}</h1>
+  {% if error %}<p class="text-red-600 mb-3 text-sm">{{ error }}</p>{% endif %}
+  <form method="post">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <div class="mb-3">
+      <label class="block text-sm font-medium mb-1">Nombre *</label>
+      <input name="nombre" required value="{{ servicio.nombre if servicio else '' }}" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+    </div>
+    <div class="mb-3">
+      <label class="block text-sm font-medium mb-1">Descripción</label>
+      <textarea name="descripcion" rows="2" class="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-emerald-500">{{ servicio.descripcion or '' }}</textarea>
+    </div>
+    <div class="grid grid-cols-2 gap-4 mb-3">
+      <div>
+        <label class="block text-sm font-medium mb-1">Duración (min) *</label>
+        <input name="duracion_minutos" type="number" min="5" required value="{{ servicio.duracion_minutos if servicio else 30 }}" class="w-full border rounded-lg px-3 py-2">
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-1">Precio (S/) *</label>
+        <input name="precio" type="number" step="0.01" min="0" required value="{{ servicio.precio if servicio else '' }}" class="w-full border rounded-lg px-3 py-2">
+      </div>
+    </div>
+    <label class="flex items-center gap-2 mb-4">
+      <input type="checkbox" name="activo" {% if not servicio or servicio.activo %}checked{% endif %}>
+      <span class="text-sm">Activo</span>
+    </label>
+    <div class="flex gap-2">
+      <button class="bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg px-4 py-2">Guardar</button>
+      <a href="{{ url_for('admin.servicios_lista') }}" class="border rounded-lg px-4 py-2">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

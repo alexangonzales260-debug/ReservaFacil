@@ -1,0 +1,37 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Dashboard · Admin{% endblock %}
+{% block admin_content %}
+<h1 class="text-2xl font-bold mb-4">Dashboard</h1>
+<div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+  <div class="bg-white rounded-lg shadow p-4">
+    <p class="text-sm text-gray-500">Reservas hoy</p>
+    <p class="text-2xl font-bold">{{ stats.total_hoy }}</p>
+  </div>
+  <div class="bg-white rounded-lg shadow p-4">
+    <p class="text-sm text-gray-500">Pendientes</p>
+    <p class="text-2xl font-bold text-amber-600">{{ stats.pendientes }}</p>
+  </div>
+  <div class="bg-white rounded-lg shadow p-4">
+    <p class="text-sm text-gray-500">Confirmadas</p>
+    <p class="text-2xl font-bold text-emerald-600">{{ stats.confirmadas }}</p>
+  </div>
+  <div class="bg-white rounded-lg shadow p-4">
+    <p class="text-sm text-gray-500">Canceladas</p>
+    <p class="text-2xl font-bold text-red-600">{{ stats.canceladas }}</p>
+  </div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+  <a href="{{ url_for('admin.servicios_lista') }}" class="bg-white rounded-lg shadow p-5 hover:shadow-md transition-shadow">
+    <p class="font-semibold text-lg text-emerald-700">Servicios</p>
+    <p class="text-sm text-gray-500">Crear y editar servicios</p>
+  </a>
+  <a href="{{ url_for('admin.empleados_lista') }}" class="bg-white rounded-lg shadow p-5 hover:shadow-md transition-shadow">
+    <p class="font-semibold text-lg text-emerald-700">Empleados</p>
+    <p class="text-sm text-gray-500">Crear y editar empleados</p>
+  </a>
+  <a href="{{ url_for('admin.reservas_lista') }}" class="bg-white rounded-lg shadow p-5 hover:shadow-md transition-shadow">
+    <p class="font-semibold text-lg text-emerald-700">Reservas</p>
+    <p class="text-sm text-gray-500">Gestionar todas las reservas</p>
+  </a>
+</div>
+{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Admin · ReservaFácil{% endblock %}
+{% block navbar %}
+<nav class="bg-emerald-700 text-white shadow">
+  <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-2">
+    <a href="{{ url_for('admin.dashboard') }}" class="text-xl font-bold tracking-tight">ReservaFácil · Admin</a>
+    <div class="flex flex-wrap items-center gap-4 text-sm">
+      <a href="{{ url_for('admin.dashboard') }}" class="hover:underline">Dashboard</a>
+      <a href="{{ url_for('admin.servicios_lista') }}" class="hover:underline">Servicios</a>
+      <a href="{{ url_for('admin.empleados_lista') }}" class="hover:underline">Empleados</a>
+      <a href="{{ url_for('admin.reservas_lista') }}" class="hover:underline">Reservas</a>
+      <a href="{{ url_for('admin.logout') }}" class="bg-white text-emerald-700 rounded px-3 py-1 font-medium">Salir</a>
+    </div>
+  </div>
+</nav>
+{% endblock %}
+{% block content %}
+<div class="max-w-6xl mx-auto">
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="mb-4">
+        {% for m in messages %}
+        <div class="bg-emerald-100 text-emerald-800 border border-emerald-300 rounded px-4 py-2 mb-1">{{ m }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+  {% block admin_content %}{% endblock %}
+</div>
+{% endblock %}

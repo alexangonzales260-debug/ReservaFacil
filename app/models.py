@@ -50,6 +50,9 @@ class Usuario(db.Model):
     def check_password(self, password: str) -> bool:
         return check_password_hash(self.password_hash, password)
 
+    def verificar_password(self, password: str) -> bool:
+        return check_password_hash(self.password_hash, password)
+
     def to_dict(self) -> dict:
         return {
             "id": self.id,

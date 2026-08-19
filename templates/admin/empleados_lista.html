@@ -1,0 +1,46 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Empleados · Admin{% endblock %}
+{% block admin_content %}
+<div class="flex justify-between items-center mb-4">
+  <h1 class="text-2xl font-bold">Empleados</h1>
+  <a href="{{ url_for('admin.empleados_nuevo') }}" class="bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg px-4 py-2">Nuevo empleado</a>
+</div>
+<div class="bg-white rounded-lg shadow overflow-x-auto">
+  <table class="w-full text-sm">
+    <thead class="bg-gray-50 text-left">
+      <tr>
+        <th class="px-4 py-2">Nombre</th>
+        <th class="px-4 py-2">Email</th>
+        <th class="px-4 py-2">Teléfono</th>
+        <th class="px-4 py-2">Horario</th>
+        <th class="px-4 py-2">Servicios</th>
+        <th class="px-4 py-2">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for e in empleados %}
+      <tr class="border-t">
+        <td class="px-4 py-2 font-medium">
+          {{ e.nombre }}{% if not e.activo %} <span class="text-red-500 text-xs">(inactivo)</span>{% endif %}
+        </td>
+        <td class="px-4 py-2">{{ e.email or '' }}</td>
+        <td class="px-4 py-2">{{ e.telefono or '' }}</td>
+        <td class="px-4 py-2">{{ e.horario_inicio.strftime('%H:%M') }}–{{ e.horario_fin.strftime('%H:%M') }}</td>
+        <td class="px-4 py-2">{{ e.servicios | map(attribute='nombre') | join(', ') }}</td>
+        <td class="px-4 py-2">
+          <a href="{{ url_for('admin.empleados_editar', empleado_id=e.id) }}" class="text-emerald-600 hover:underline">Editar</a>
+          {% if e.activo %}
+          <form method="post" action="{{ url_for('admin.empleados_eliminar', empleado_id=e.id) }}" class="inline ml-2">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            <button class="text-red-600 hover:underline" onclick="return confirm('¿Desactivar este empleado?')">Eliminar</button>
+          </form>
+          {% endif %}
+        </td>
+      </tr>
+      {% else %}
+      <tr class="border-t"><td colspan="6" class="px-4 py-6 text-center text-gray-500">No hay empleados registrados.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

@@ -36,12 +36,13 @@ Regla: NO avanzar de fase sin que su criterio de cierre pase.
 - **Verificación:** `pytest -q tests/test_models.py tests/test_api.py -k "conflict"` + `./validate.sh`.
 - **Resultado:** 32 tests PASADOS (6 nuevos de conflictos). `Reserva.hay_conflicto` en models; POST `/reservas` retorna 409 en solapamiento; disponibilidad filtra slots ocupados y excluye canceladas. Curl real: 201 → 409 → disponibilidad sin `10:00`. `./validate.sh` verde con nuevo grep.
 
-## FASE 5 — Panel administrador
+## FASE 5 — Panel administrador  ✅ COMPLETADA (2026-08-18)
 
 - **Descripción:** blueprint `admin` con CRUD de servicios y empleados, gestión de horarios de atención y listado de todas las reservas con filtros (RF-ADM-*).
 - **Archivos:** `app/admin/*`, `templates/admin/*`, `app/models.py`, `tests/*`.
 - **Criterio de cierre:** CRUD de servicios/empleados/reservas funciona desde el panel (verificado por pytest + navegador).
 - **Verificación:** `pytest -q` + prueba manual en navegador + `./validate.sh`.
+- **Resultado:** 38 tests PASADOS (6 nuevos de admin). Login con `flask.session` + `@admin_required`; soft delete en servicios/empleados; gestión de estados de reserva (confirmar/cancelar/completar); seed crea admin `admin/admin123`.
 
 ## FASE 6 — Emails simulados + pulido
 

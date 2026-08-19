@@ -10,7 +10,14 @@ from typing import List
 
 from app import create_app
 from app.extensions import db
-from app.models import Empleado, Servicio
+from app.models import Empleado, Servicio, Usuario
+
+ADMIN_USER = {
+    "username": "admin",
+    "nombre": "Administrador",
+    "email": "admin@reservafacil.pe",
+    "password": "admin123",
+}
 
 SERVICIOS = [
     {
@@ -51,6 +58,24 @@ EMPLEADOS = [
 ]
 
 
+def _crear_admin() -> None:
+    admin = db.session.execute(
+        db.select(Usuario).where(Usuario.username == ADMIN_USER["username"])
+    ).scalar_one_or_none()
+    if admin is None:
+        admin = Usuario(
+            username=ADMIN_USER["username"],
+            nombre=ADMIN_USER["nombre"],
+            email=ADMIN_USER["email"],
+            es_admin=True,
+        )
+        admin.set_password(ADMIN_USER["password"])
+        db.session.add(admin)
+        print(f"  Admin creado: {ADMIN_USER['username']} / {ADMIN_USER['password']}")
+    else:
+        print(f"  Admin ya existe: {ADMIN_USER['username']}")
+
+
 def seed() -> None:
     servicios: List[Servicio] = []
     for data in SERVICIOS:
@@ -84,6 +109,8 @@ def seed() -> None:
     print("Seed completado.")
     print("  Servicios:", ", ".join(s.nombre for s in servicios))
     print("  Empleados:", ", ".join(e.nombre for e in empleados))
+    _crear_admin()
+    db.session.commit()
 
 
 if __name__ == "__main__":
