@@ -81,6 +81,10 @@ echo "=== Gates threat-light (FASE 7) ==="
 echo "OK: gates threat-light sin violaciones."
 
 echo ""
+echo "=== Verificando export CSV de reportes (FASE 10) ==="
+grep -n "reservas.csv" app/admin/routes.py || exit 1
+
+echo ""
 echo "=== [4/5] Ejecutando pytest ==="
 if compgen -G "tests/test_*.py" >/dev/null 2>&1; then
   if python -m pytest -q; then

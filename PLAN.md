@@ -75,3 +75,9 @@ Cada fase finaliza ejecutando `./validate.sh`. La secuencia completa (FASE 1 →
 - **Descripción:** registro/login de cliente (flask.session + Werkzeug), portal "Mis reservas" con cancelación propia y adopción de cuentas anónimas.
 - **Archivos:** `app/cliente/routes.py`, `app/api/routes.py`, `templates/registrarse.html`, `templates/login_cliente.html`, `templates/mis_reservas.html`, `templates/base.html`, `tests/test_auth_cliente.py`.
 - **Verificación:** `./validate.sh` + `pytest -q` (53 tests, 0 warnings) + flujo curl registro → mis-reservas → cancelar.
+
+## F10 Reportes  ✅ COMPLETADA
+
+- **Descripción:** inteligencia de negocio para el dueño: dashboard de reportes (métricas del mes + gráficos Chart.js de reservas por día y top servicios) y exportación CSV de reservas con filtros.
+- **Archivos:** `app/admin/routes.py`, `templates/admin/reportes.html`, `templates/admin/base_admin.html`, `tests/test_reportes.py`, `validate.sh`, `SPEC.md`, `DECISIONS.md`.
+- **Verificación:** `./validate.sh` + `pytest -q` + flujo curl reportes/CSV con y sin sesión admin.

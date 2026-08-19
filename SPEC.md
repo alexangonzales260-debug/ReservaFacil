@@ -62,6 +62,11 @@ Convenciones de nomenclatura en este documento:
 - **RF-ADM-09** — Cuando el administrador acceda al panel, el sistema deberá listar todas las reservas con filtros por fecha, estado y empleado.
 - **RF-ADM-10** — Cuando el administrador cancele una reserva, el sistema deberá cambiar su estado a "cancelada".
 
+### 2.5 Reportes e inteligencia de negocio
+
+- **RF-ADM-11** — Cuando el administrador acceda a reportes, el sistema deberá mostrar las métricas del mes (ingresos proyectados, tasa de cancelación y total de reservas) y gráficos de reservas por día (últimos 30 días) y de top de servicios, agrupado todo en zona horaria America/Lima.
+- **RF-ADM-12** — Cuando el administrador solicite la exportación, el sistema deberá generar un CSV de reservas (UTF-8 con BOM, columnas `codigo, cliente_nombre, cliente_email, servicio, empleado, inicio, fin, estado, precio`) ordenado por fecha de inicio descendente, con filtros opcionales por `estado`, `desde` y `hasta` (YYYY-MM-DD).
+
 ---
 
 ## 3. Sistema

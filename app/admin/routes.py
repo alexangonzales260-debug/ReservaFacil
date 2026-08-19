@@ -1,8 +1,11 @@
 from __future__ import annotations
 
-from datetime import datetime, time
+import csv
+import io
+from datetime import datetime, time, timedelta
 from functools import wraps
 from typing import Callable, List, Optional
+from zoneinfo import ZoneInfo
 
 from flask import (
     Response,
@@ -21,6 +24,12 @@ from app.emails import enviar_email
 from app.extensions import db
 from app.models import Empleado, Reserva, Servicio, Usuario
 from app.whatsapp import enviar_whatsapp_simulado
+
+LIMA_TZ = ZoneInfo("America/Lima")
+
+
+def _ahora_lima() -> datetime:
+    return datetime.now(LIMA_TZ)
 
 
 def admin_required(view: Callable) -> Callable:
@@ -103,6 +112,174 @@ def dashboard() -> Response:
         "canceladas": _count_reservas("cancelada", dia_inicio, dia_fin),
     }
     return render_template("admin/dashboard.html", stats=stats)
+
+
+@admin.get("/reportes")
+@admin_required
+def reportes() -> Response:
+    hoy = _ahora_lima().date()
+    inicio_ventana = datetime.combine(hoy - timedelta(days=29), time.min)
+    fin_ventana = datetime.combine(hoy, time.max)
+
+    por_dia_raw = db.session.execute(
+        db.select(
+            func.date(Reserva.fecha_hora_inicio).label("dia"),
+            func.count(Reserva.id).label("total"),
+        )
+        .where(
+            Reserva.fecha_hora_inicio >= inicio_ventana,
+            Reserva.fecha_hora_inicio <= fin_ventana,
+        )
+        .group_by(func.date(Reserva.fecha_hora_inicio))
+        .order_by(func.date(Reserva.fecha_hora_inicio))
+    ).all()
+    por_dia = {fila.dia: fila.total for fila in por_dia_raw}
+
+    labels_dias: List[str] = []
+    data_dias: List[int] = []
+    for i in range(29, -1, -1):
+        dia = hoy - timedelta(days=i)
+        labels_dias.append(dia.strftime("%d/%m"))
+        data_dias.append(por_dia.get(dia.isoformat(), 0))
+
+    top_raw = db.session.execute(
+        db.select(Servicio.nombre, func.count(Reserva.id).label("total"))
+        .join(Reserva, Reserva.servicio_id == Servicio.id)
+        .where(Reserva.estado != "cancelada")
+        .group_by(Servicio.nombre)
+        .order_by(func.count(Reserva.id).desc())
+        .limit(5)
+    ).all()
+    labels_servicios = [fila.nombre for fila in top_raw]
+    data_servicios = [fila.total for fila in top_raw]
+
+    primer_dia_mes = datetime.combine(hoy.replace(day=1), time.min)
+    primer_dia_siguiente = datetime.combine(
+        (hoy.replace(day=1) + timedelta(days=32)).replace(day=1), time.min
+    )
+    ingresos_mes = (
+        db.session.execute(
+            db.select(func.sum(Servicio.precio))
+            .join(Reserva, Reserva.servicio_id == Servicio.id)
+            .where(
+                Reserva.estado.in_(["confirmada", "completada"]),
+                Reserva.fecha_hora_inicio >= primer_dia_mes,
+                Reserva.fecha_hora_inicio < primer_dia_siguiente,
+            )
+        ).scalar()
+        or 0
+    )
+    total_mes = (
+        db.session.execute(
+            db.select(func.count(Reserva.id)).where(
+                Reserva.fecha_hora_inicio >= primer_dia_mes,
+                Reserva.fecha_hora_inicio < primer_dia_siguiente,
+            )
+        ).scalar()
+        or 0
+    )
+    canceladas_mes = (
+        db.session.execute(
+            db.select(func.count(Reserva.id)).where(
+                Reserva.estado == "cancelada",
+                Reserva.fecha_hora_inicio >= primer_dia_mes,
+                Reserva.fecha_hora_inicio < primer_dia_siguiente,
+            )
+        ).scalar()
+        or 0
+    )
+    tasa_cancelacion = (canceladas_mes / total_mes) if total_mes else 0.0
+
+    chart_datos = {
+        "por_dia": {"labels": labels_dias, "data": data_dias},
+        "top_servicios": {"labels": labels_servicios, "data": data_servicios},
+    }
+    return render_template(
+        "admin/reportes.html",
+        ingresos_mes=ingresos_mes,
+        tasa_cancelacion=tasa_cancelacion,
+        total_mes=total_mes,
+        chart_datos=chart_datos,
+    )
+
+
+@admin.get("/reportes/reservas.csv")
+@admin_required
+def reportes_csv() -> Response:
+    query = (
+        db.select(Reserva)
+        .join(Usuario, Reserva.usuario_id == Usuario.id)
+        .join(Servicio, Reserva.servicio_id == Servicio.id)
+        .join(Empleado, Reserva.empleado_id == Empleado.id)
+        .order_by(Reserva.fecha_hora_inicio.desc())
+    )
+
+    estado = request.args.get("estado", "").strip()
+    desde = request.args.get("desde", "").strip()
+    hasta = request.args.get("hasta", "").strip()
+
+    if estado:
+        query = query.where(Reserva.estado == estado)
+    if desde:
+        try:
+            fecha_desde = datetime.strptime(desde, "%Y-%m-%d").date()
+        except ValueError:
+            abort(400)
+        query = query.where(
+            Reserva.fecha_hora_inicio >= datetime.combine(fecha_desde, time.min)
+        )
+    if hasta:
+        try:
+            fecha_hasta = datetime.strptime(hasta, "%Y-%m-%d").date()
+        except ValueError:
+            abort(400)
+        query = query.where(
+            Reserva.fecha_hora_inicio <= datetime.combine(fecha_hasta, time.max)
+        )
+
+    reservas = db.session.execute(query).scalars().all()
+
+    buffer = io.StringIO()
+    writer = csv.writer(buffer)
+    writer.writerow(
+        [
+            "codigo",
+            "cliente_nombre",
+            "cliente_email",
+            "servicio",
+            "empleado",
+            "inicio",
+            "fin",
+            "estado",
+            "precio",
+        ]
+    )
+    for r in reservas:
+        writer.writerow(
+            [
+                r.codigo,
+                r.usuario.nombre or r.usuario.username,
+                r.usuario.email,
+                r.servicio.nombre,
+                r.empleado.nombre,
+                r.fecha_hora_inicio.strftime("%Y-%m-%d %H:%M"),
+                r.fecha_hora_fin.strftime("%Y-%m-%d %H:%M"),
+                r.estado,
+                f"{r.servicio.precio:.2f}",
+            ]
+        )
+
+    fecha_archivo = _ahora_lima().strftime("%Y%m%d")
+    contenido = "\ufeff" + buffer.getvalue()
+    return Response(
+        contenido,
+        mimetype="text/csv",
+        headers={
+            "Content-Disposition": (
+                f'attachment; filename="reservafacil_reservas_{fecha_archivo}.csv"'
+            )
+        },
+    )
 
 
 @admin.get("/servicios")

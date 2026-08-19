@@ -67,3 +67,9 @@ Formato: 3 líneas por entrada — **Contexto** / **Decisión** / **Consecuencia
 - **Contexto:** Cliente anónimo (D1); el Usuario anónimo se crea sin contraseña propia.
 - **Decisión:** Registrarse con un email anónimo activa la cuenta y hereda sus reservas.
 - **Consecuencia:** Sin verificación de email, aceptable en threat-light.
+
+## D12 | BI sin tooling de build ni dependencias de servidor
+
+- **Contexto:** El dueño necesita inteligencia de negocio (métricas y gráficos) sin tooling de build ni dependencias de servidor.
+- **Decisión:** Chart.js vía CDN (coherente con Tailwind, D7) + exportación CSV con stdlib (`csv`).
+- **Consecuencia:** Cero dependencias nuevas en `requirements.txt`; Chart.js requiere internet en el cliente, aceptable.

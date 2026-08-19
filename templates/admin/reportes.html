@@ -1,0 +1,53 @@
+{% extends "admin/base_admin.html" %}
+{% block title %}Reportes · Admin{% endblock %}
+{% block admin_content %}
+<h1 class="text-2xl font-bold mb-4">Reportes</h1>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+  <div class="bg-white rounded-lg shadow p-4">
+    <p class="text-sm text-gray-500">Ingresos proyectados del mes</p>
+    <p class="text-2xl font-bold text-emerald-600">S/ {{ "%.2f"|format(ingresos_mes) }}</p>
+  </div>
+  <div class="bg-white rounded-lg shadow p-4">
+    <p class="text-sm text-gray-500">Tasa de cancelación del mes</p>
+    <p class="text-2xl font-bold text-red-600">{{ "%.1f"|format(tasa_cancelacion * 100) }}%</p>
+  </div>
+  <div class="bg-white rounded-lg shadow p-4">
+    <p class="text-sm text-gray-500">Total reservas del mes</p>
+    <p class="text-2xl font-bold">{{ total_mes }}</p>
+  </div>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+  <div class="bg-white rounded-lg shadow p-4">
+    <h2 class="text-lg font-semibold mb-3">Reservas por día (últimos 30 días)</h2>
+    <canvas id="grafico-dias" height="220"></canvas>
+  </div>
+  <div class="bg-white rounded-lg shadow p-4">
+    <h2 class="text-lg font-semibold mb-3">Top servicios (sin canceladas)</h2>
+    <canvas id="grafico-servicios" height="220"></canvas>
+  </div>
+</div>
+<div class="mb-4">
+  <a href="{{ url_for('admin.reportes_csv') }}" class="bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg px-4 py-2">Descargar CSV</a>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+const porDia = {{ chart_datos.por_dia | tojson }};
+const topServicios = {{ chart_datos.top_servicios | tojson }};
+new Chart(document.getElementById('grafico-dias'), {
+  type: 'bar',
+  data: {
+    labels: porDia.labels,
+    datasets: [{ label: 'Reservas', data: porDia.data, backgroundColor: '#059669' }]
+  },
+  options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+});
+new Chart(document.getElementById('grafico-servicios'), {
+  type: 'bar',
+  data: {
+    labels: topServicios.labels,
+    datasets: [{ label: 'Reservas', data: topServicios.data, backgroundColor: '#0d9488' }]
+  },
+  options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } } }
+});
+</script>
+{% endblock %}
