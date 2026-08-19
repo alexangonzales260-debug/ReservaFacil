@@ -10,4 +10,4 @@
 | F0 Retrofit v2 | 40 | 0 | 0 | OK | ea5c2f6 |
 | F7 Hardening | 42 | 0 | 0 | OK | 0c81c8d |
 | F8 WhatsApp | 45 | 0 | 0 | OK | b584853 |
-| F9 Auth Cliente | 53 | 0 | 0 | OK | (pendiente) |
+| F9 Auth Cliente | 53 | 0 | 0 | OK | b7154b5 |
