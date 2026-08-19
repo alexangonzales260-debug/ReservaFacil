@@ -172,3 +172,32 @@ def test_post_reservas_anonimo_sigue_funcionando(client, seed):
     )
     assert rv.status_code == 201
     assert rv.get_json()["estado"] == "pendiente"
+
+
+def test_login_anonimo_con_sentinel_rechazado(client, seed):
+    from app.cliente.routes import PASSWORD_ANONIMO
+
+    _, servicio, empleado = seed()
+    anon_email = "anonx@example.com"
+    rv = client.post(
+        "/api/v1/reservas",
+        json={
+            "servicio_id": servicio.id,
+            "empleado_id": empleado.id,
+            "fecha_hora_inicio": "2026-08-25T17:30",
+            "nombre": "Anónimo X",
+            "email": anon_email,
+        },
+    )
+    assert rv.status_code == 201
+
+    login = client.post(
+        "/login-cliente",
+        data={"email": anon_email, "password": PASSWORD_ANONIMO},
+    )
+    assert login.status_code == 401
+    with client.session_transaction() as sess:
+        assert "user_id" not in sess
+
+    mis = client.get("/mis-reservas")
+    assert mis.status_code == 302

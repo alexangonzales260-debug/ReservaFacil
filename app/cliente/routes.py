@@ -158,6 +158,22 @@ def login_cliente_post() -> Response:
         db.select(Usuario).where(Usuario.email == email)
     ).scalar_one_or_none()
     if (
+        usuario is not None
+        and not usuario.es_admin
+        and usuario.verificar_password(PASSWORD_ANONIMO)
+    ):
+        return (
+            render_template(
+                "login_cliente.html",
+                error=(
+                    "Esta cuenta se creó con una reserva anónima. "
+                    "Regístrate con ese email para activarla."
+                ),
+                email=email,
+            ),
+            401,
+        )
+    if (
         usuario is None
         or usuario.es_admin
         or not usuario.verificar_password(password)

@@ -36,6 +36,7 @@ Restricciones técnicas y convenciones del proyecto. **Reglas no negociables.**
 - Contraseñas hasheadas con **Werkzeug** (`generate_password_hash` / `check_password_hash`).
 - **CSRF** habilitado en todos los formularios (Flask-WTF).
 - No exponer secretos en código ni en logs.
+- `PASSWORD_ANONIMO` es un sentinel de detección/adoptación (solo `/registrarse`); jamás se acepta como credencial en `/login-cliente`.
 
 ## 5. Convenciones
 
